@@ -128,7 +128,7 @@ class EntitiesExtractorService:
 
         ### Допустимые значения:
         - `categoryType`: Time, Location, Event, Shopping, Call, Meeting, Deadline, Health, Routine, Other  
-        - `triggerType`: Time, Location  
+        - `triggerType`: Time, Location
 
         ### Правила:
         1. `categoryType` определяется по смыслу напоминания:
@@ -167,6 +167,15 @@ class EntitiesExtractorService:
                     "triggerValue": "2025-06-17 10:00"
                 }}
             ]
+        }}
+        
+        ### Пример 3 (с текущим временем {current_time} = "2025-06-16 09:00"):
+        Команда: "напомни"
+        Вывод:
+        {{
+            "text": "Команда не содержит достаточно информации для создания напоминания.",
+            "categoryType": "Other",
+            "triggers": []
         }}
 
         Теперь разбери команду пользователя (текущее время: {current_time}):
