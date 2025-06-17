@@ -173,18 +173,21 @@ class EntitiesExtractorService:
         }}
 
         ### Пример 3 (известные локации: "дом")
-        Команда: "напомни позвонить маме завтра в 10:00"
+        Команда: "Когда буду в пятерочке и если будет 6 вечера, напомни купить сырки бю александров"
         Вывод:
         {{
-            "text": "Позвонить маме",
-            "categoryType": "Call",
+            "text": "Купить сырки Б. Ю. Александров",
+            "categoryType": "Shopping",
             "triggers": [
                 {{
-                    "triggerType": "Time",
-                    "triggerValue": "2025-06-17 10:00"
+                  "triggerType": "Location",
+                  "triggerValue": "Пятёрочка"
+                }},
+                {{
+                  "triggerType": "Time",
+                  "triggerValue": "2025-06-16 18:00"
                 }}
-            ],
-            "status": "success",
+            ]
             "message": ""
         }}
 
