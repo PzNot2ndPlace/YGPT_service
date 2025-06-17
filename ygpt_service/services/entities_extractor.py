@@ -2,7 +2,7 @@ import httpx
 import json
 from fastapi import HTTPException
 from pydantic import ValidationError
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 from ygpt_service.constants import *
 from ygpt_service.schemas import GenerateTextRequest
@@ -27,7 +27,7 @@ class EntitiesExtractorService:
                 detail="API key for AI service (text) is not configured"
             )
 
-        prompt = self.build_prompt(options.current_time)
+        prompt = self.build_prompt(options.current_time, options.locations)
 
         request_data = {
             "modelUri": f"gpt://{FOLDER_ID}/yandexgpt-lite",
@@ -111,9 +111,13 @@ class EntitiesExtractorService:
             raise ValueError(f"Response validation failed: {str(e)}")
 
     @staticmethod
-    def build_prompt(current_time: str) -> str:
+    def build_prompt(current_time: str, locations: List[str]) -> str:
+        known_locations = ", ".join(f'"{loc}"' for loc in locations) if locations else "нет известных мест"
         return f"""
-        Ты — AI-ассистент для создания напоминаний. Разбирай команды пользователя, используя текущее время: {current_time}. 
+        Ты — AI-ассистент для создания напоминаний. Разбирай команды пользователя, используя:
+        - Текущее время: {current_time}
+        - Известные локации пользователя: {known_locations}
+
         Возвращай JSON строго в таком формате:
         {{
             "text": "текст напоминания",
@@ -123,62 +127,68 @@ class EntitiesExtractorService:
                     "triggerType": "одно из допустимых значений",
                     "triggerValue": "конкретное время/место/событие"
                 }}
-            ]
+            ],
+            "status": "success" или "error",
+            "message": "описание проблемы (если status=error)"
         }}
 
         ### Допустимые значения:
         - `categoryType`: Time, Location, Event, Shopping, Call, Meeting, Deadline, Health, Routine, Other  
         - `triggerType`: Time, Location
 
-        ### Правила:
-        1. `categoryType` определяется по смыслу напоминания:
-           - "купить молоко" → Shopping  
-           - "позвонить маме" → Call  
-           - "встреча в кафе" → Meeting  
-        2. `triggerType` зависит от условия:
+        ### Важные правила:
+        1. Для триггеров типа Location:
+           - Используй ТОЛЬКО локации из известного списка: {known_locations}
+           - Если локация не найдена в списке, верни status=error и сообщи об этом
+        2. Для времени:
            - "в 18:00" → Time (преобразуй в абсолютное время, используя {current_time})  
            - "через 2 часа" → Time (вычисли: {current_time} + 2 часа)  
-           - "когда буду в Пятёрочке" → Location  
-        3. Для относительного времени (e.g., "завтра", "через час") всегда указывай абсолютное время в формате "YYYY-MM-DD HH:MM".
+        3. Если команда неполная, верни status=error с пояснением
 
-        ### Пример 1 (с текущим временем {current_time} = "2025-06-16 15:00"):
-        Команда: "Напомни выгулить собаку через 3 часа"
+        ### Пример 1 (известные локации: "дом", "парк")
+        Команда: "напомни погулять с собакой когда буду в парке"
         Вывод:
         {{
-            "text": "Выгулить собаку",
+            "text": "Погулять с собакой",
             "categoryType": "Routine",
             "triggers": [
                 {{
-                    "triggerType": "Time",
-                    "triggerValue": "2025-06-16 18:00"
+                    "triggerType": "Location",
+                    "triggerValue": "парк"
                 }}
-            ]
+            ],
+            "status": "success",
+            "message": ""
         }}
 
-        ### Пример 2 (с текущим временем {current_time} = "2025-06-16 09:00"):
-        Команда: "Завтра в 10:00 напомни позвонить врачу"
+        ### Пример 2 (известные локации: "дом", "офис")
+        Команда: "напомни купить молоко когда буду в магазине"
         Вывод:
         {{
-            "text": "Позвонить врачу",
-            "categoryType": "Health",
+            "text": "",
+            "categoryType": "Other",
+            "triggers": [],
+            "status": "error",
+            "message": "Локация 'магазин' не найдена в ваших известных местах"
+        }}
+
+        ### Пример 3 (известные локации: "дом")
+        Команда: "напомни позвонить маме завтра в 10:00"
+        Вывод:
+        {{
+            "text": "Позвонить маме",
+            "categoryType": "Call",
             "triggers": [
                 {{
                     "triggerType": "Time",
                     "triggerValue": "2025-06-17 10:00"
                 }}
-            ]
-        }}
-        
-        ### Пример 3 (с текущим временем {current_time} = "2025-06-16 09:00"):
-        Команда: "напомни"
-        Вывод:
-        {{
-            "text": "Команда не содержит достаточно информации для создания напоминания.",
-            "categoryType": "Other",
-            "triggers": []
+            ],
+            "status": "success",
+            "message": ""
         }}
 
-        Теперь разбери команду пользователя (текущее время: {current_time}):
+        Теперь разбери команду пользователя (текущее время: {current_time}, известные локации: {known_locations}):
         """
 
 
