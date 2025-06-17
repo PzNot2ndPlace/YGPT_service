@@ -98,6 +98,10 @@ class EntitiesExtractorService:
             if data["categoryType"] not in valid_categories:
                 raise ValueError(f"Invalid categoryType: {data['categoryType']}")
 
+            if not data["triggers"]:
+                data["status"] = "error"
+                data["message"] = "Ваше напоминание не содержит условий срабатывания"
+
             # Проверка триггеров
             for trigger in data["triggers"]:
                 if not all(key in trigger for key in ["triggerType", "triggerValue"]):
