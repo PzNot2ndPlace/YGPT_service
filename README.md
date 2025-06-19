@@ -100,3 +100,15 @@ bandit -r ./
 
 <img src="https://github.com/PzNot2ndPlace/YGPT_service/blob/develop/images/1..png">
 <img src="https://github.com/PzNot2ndPlace/YGPT_service/blob/develop/images/Снимок%20экрана%202025-06-20%20003810.png">
+
+### 2. Динамический анализ безопасности (DAST)
+
+[Репорт Nikto](https://github.com/PzNot2ndPlace/YGPT_service/blob/develop/report.html)
+
+### 3. Динамический анализ безопасности (DAST)
+
+```bash
+safety scan
+```
+
+<img src="https://github.com/PzNot2ndPlace/YGPT_service/blob/develop/images/Снимок%20экрана%202025-06-20%20015052.png">
