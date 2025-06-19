@@ -89,13 +89,3 @@ Output:
   "message": "Команда неполная и не содержит достаточно информации для создания напоминания"
 }
 ```
-
-# А еще теперь это МОЯ ЛАБА ПО КИБЕРБЕЗУ
-так что...
-
-### 1. Статический анализ кода (SAST)
-```
-bandit -r ./
-```
-
-<img src="https://github.com/VictoriaKlyueva/Ru-texts-normalization-with-triton-inference-server/blob/readme/images/kaggle_leaderboard_screen">
