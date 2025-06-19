@@ -89,3 +89,14 @@ Output:
   "message": "Команда неполная и не содержит достаточно информации для создания напоминания"
 }
 ```
+
+# А еще теперь это МОЯ ЛАБА ПО КИБЕРБЕЗУ
+так что...
+
+### 1. Статический анализ кода (SAST)
+```
+bandit -r ./
+```
+
+<img src="https://github.com/PzNot2ndPlace/YGPT_service/blob/develop/images/1..png">
+<img src="https://github.com/PzNot2ndPlace/YGPT_service/blob/develop/images/Снимок%20экрана%202025-06-20%20003810.png">
