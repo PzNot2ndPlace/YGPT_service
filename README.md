@@ -94,21 +94,42 @@ Output:
 так что...
 
 ### 1. Статический анализ кода (SAST)
+1. Установка bandit
+```bash
+poetry add bandit
+poetry install --no-root
+```
+2. Статический анализ всех файлов
 ```
 bandit -r ./
 ```
-
 <img src="https://github.com/PzNot2ndPlace/YGPT_service/blob/develop/images/1..png">
+3. Та же команда, но если подставлять токен в коде напрямую, как и сделали половина команд на хаке
 <img src="https://github.com/PzNot2ndPlace/YGPT_service/blob/develop/images/Снимок%20экрана%202025-06-20%20003810.png">
 
 ### 2. Динамический анализ безопасности (DAST)
-
-[Репорт Nikto](https://github.com/PzNot2ndPlace/YGPT_service/blob/develop/report.html)
+1. Установка Nikto (на WSL)
+```bash
+sudo apt install nikto
+```
+2. Запуск (специально добавила эндпоинт entities/insecure_headers с небезопасными заголовками чтобы стриггерить инструмент)
+```bash
+nikto -h http://localhost:8000/entities/insecure_headers -output report.html
+```
+3. [Репорт Nikto](https://github.com/PzNot2ndPlace/YGPT_service/blob/develop/report.html)
 
 ### 3. Динамический анализ безопасности (DAST)
 
+1. Установка safety
+```bash
+poetry add safety
+poetry install --no-root
+```
+
+2. Запуск проверки
 ```bash
 safety scan
 ```
 
 <img src="https://github.com/PzNot2ndPlace/YGPT_service/blob/develop/images/Снимок%20экрана%202025-06-20%20015052.png">
+Триггерить пот заданию не требовалось
