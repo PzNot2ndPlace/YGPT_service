@@ -132,4 +132,4 @@ safety scan
 ```
 
 <img src="https://github.com/PzNot2ndPlace/YGPT_service/blob/develop/images/Снимок%20экрана%202025-06-20%20015052.png">
-Триггерить пот заданию не требовалось
+Триггерить потзаданию не требовалось
